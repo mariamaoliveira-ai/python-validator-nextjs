@@ -1,7 +1,11 @@
 {
   "name": "frontend-nextjs",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
+  "overrides": {
+    "undici": "^6.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
