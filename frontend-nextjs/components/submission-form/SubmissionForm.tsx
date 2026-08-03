@@ -1,12 +1,16 @@
+"use client";
+
 import { Alert, Box, Button, CircularProgress, Stack, TextField } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
-
+import {useRouter} from 'next/navigation'
 import { useState } from 'react'
-import { submitValidation } from '../../api/validatorApi'
+import { submitValidation } from '../../lib/validatorApi'
 
 
 function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void }) {
+
+    const router = useRouter()
+
     const [isLoading, setIsLoading] = useState(false)
     const [studentName, setStudentName] = useState('')
     const [file, setFile] = useState<File | null>(null)
@@ -22,6 +26,7 @@ function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void })
             const response = await submitValidation({ studentName, file: file! })
             setStatusMessage('success')
             setResponseMessage(response.message)
+            router.refresh()
         }catch(error){
             setStatusMessage('error')
             setResponseMessage(`Submission Failed: ${error}`)

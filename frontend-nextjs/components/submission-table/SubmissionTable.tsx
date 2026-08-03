@@ -1,3 +1,4 @@
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { format } from 'date-fns';
-import { type Submission } from '../../api/validatorApi';
+import { type Submission } from '../../lib/validatorApi';
 
 
 function SubmissionTable({ submissions }: { submissions: Submission[] }) {

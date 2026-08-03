@@ -1,29 +1,18 @@
-'use client'
+import SubmissionForm from "../components/submission-form/SubmissionForm";
+import SubmissionTable from "../components/submission-table/SubmissionTable";
+import { getSubmissions, Submission } from "../lib/validatorApi";
 
-import Image from "next/image";
-import SubmissionForm from "./components/submission-form/SubmissionForm";
-import SubmissionTable from "./components/submission-table/SubmissionTable";
-import { useEffect, useState } from "react";
-import { getSubmissions, Submission } from "./api/validatorApi";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-export default function Home() {
-
-    const [submissions, setSubmissions] = useState<Submission[]>([])
-
-  function orderSubmissionsByDate(submissions: Submission[]): Submission[] {
+function orderSubmissionsByDate(submissions: Submission[]): Submission[] {
     return submissions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   }
 
-  function fetchSubmissions() {
-    getSubmissions()
-    .then((data) => setSubmissions(orderSubmissionsByDate(data)))
-    .catch((error) => console.error('Failed to load submissions', error))
-  }
+export default async function Home() {
 
-  useEffect(() => {
-    fetchSubmissions()
-  }, [])
-  
+  const submissions = orderSubmissionsByDate(await getSubmissions());
+
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
       <header className="mb-8"> 
@@ -36,7 +25,7 @@ export default function Home() {
       </header>
 
       <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">{}
-        <SubmissionForm onSubmitComplete={fetchSubmissions} />
+        <SubmissionForm/>
       </section>
 
       <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">{}
