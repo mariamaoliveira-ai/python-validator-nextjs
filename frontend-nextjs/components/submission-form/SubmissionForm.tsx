@@ -30,6 +30,7 @@ function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void })
         }catch(error){
             setStatusMessage('error')
             setResponseMessage(`Submission Failed: ${error}`)
+            router.refresh()
         }finally{
             setIsLoading(false)
             setStudentName('')
