@@ -61,3 +61,7 @@ MANIFEST
 *.njsproj
 *.sln
 *.swp
+
+# To include the lib folder in frontend-nextjs, you can add the following lines to your .gitignore file:
+!frontend-nextjs/lib/
+!frontend-nextjs/lib/**
