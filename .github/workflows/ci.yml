@@ -84,10 +84,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ../backend
 
-      - name: Setup Node
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend-nextjs/package-lock.json
 
       - name: Install frontend-nextjs deps
         working-directory: frontend-nextjs
