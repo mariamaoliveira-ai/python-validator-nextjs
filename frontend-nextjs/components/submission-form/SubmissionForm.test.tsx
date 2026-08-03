@@ -66,7 +66,7 @@ describe('SubmissionForm', () => {
             await user.upload(screen.getByTestId('file-upload'), new File(['print("Hello World")'], 'hello.py', { type: 'text/x-python' }))
             await user.click(screen.getByRole('button', { name: /submit/i }))
 
-            expect(onSubmitComplete).toHaveBeenCalledOnce()
+            expect(onSubmitComplete).toHaveBeenCalledTimes(1)
         });
 
         it('should call onSubmitComplete even when form submission fails', async ()=>{
@@ -82,7 +82,7 @@ describe('SubmissionForm', () => {
             await user.upload(screen.getByTestId('file-upload'), new File(['print("Hello World"'], 'hello.py', { type: 'text/x-python' }))
             await user.click(screen.getByRole('button', { name: /submit/i }))
 
-            expect(onSubmitComplete).toHaveBeenCalledOnce()
+            expect(onSubmitComplete).toHaveBeenCalledTimes(1)
         });
 
         it('should show error message when form submission fails', async ()=>{
