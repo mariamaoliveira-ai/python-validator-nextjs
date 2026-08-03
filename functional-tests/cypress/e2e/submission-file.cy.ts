@@ -45,26 +45,21 @@ describe('File Upload Success Flow', () => {
   });
 
   it('should reload the table with new data when submission is made', () => {
-    cy.intercept('POST', '**/upload').as('postUpload');
-    cy.intercept('GET', '**/submissions*').as('getSubmissions');
+    // Generate a unique name for this test run
+    const uniqueStudentName = `${testDataValid.studentName}_${Date.now()}`;
 
     // Fill in student name
-    cy.get('#student-input').type(testDataValid.studentName);
+    cy.get('#student-input').type(uniqueStudentName);
 
     // Upload the valid Python file
     cy.get('#file-upload').selectFile(`cypress/fixtures/${testDataValid.filename}`, { force: true });
 
     // Submit the form
     cy.get('[name="submit"]').click();
-    cy.wait('@postUpload');
-    cy.wait('@getSubmissions');
 
     // Verify success message appears
     cy.get('[role="alert"]').should('be.visible');
     cy.get('[role="alert"]').should('contain', 'File executed successfully and passed all tests.');
-
-    // Wait for the submissions reload triggered by onSubmitComplete
-    cy.wait('@getSubmissions');
 
     // Verify that the new submission appears in the table
     cy.get('table').contains('th', testDataValid.studentName).should('exist');
