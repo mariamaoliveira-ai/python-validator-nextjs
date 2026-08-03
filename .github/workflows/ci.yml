@@ -111,15 +111,24 @@ jobs:
       - name: Start frontend
         working-directory: frontend-nextjs
         run: |
-          nohup npm run dev -- --host 0.0.0.0 --port 3000 > ../frontend.log 2>&1 &
+          nohup npm run dev -- --hostname 0.0.0.0 --port 3000 > ../frontend.log 2>&1 &
 
       - name: Wait for services
         run: |
           for url in http://localhost:8000/docs http://localhost:3000; do
             echo "Waiting for $url"
-            until curl -sSf "$url" > /dev/null; do
+            for i in {1..30}; do
+              curl -fsS "$url" >/dev/null && break
               sleep 2
             done
+            curl -fsS "$url" >/dev/null || {
+              echo "Timed out waiting for $url"
+              echo "Backend log:"
+              cat ../backend.log || true
+              echo "Frontend log:"
+              cat ../frontend.log || true
+              exit 1
+            }
           done
 
       - name: Run Cypress
