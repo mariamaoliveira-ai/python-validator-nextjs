@@ -45,7 +45,8 @@ describe('File Upload Success Flow', () => {
   });
 
   it('should reload the table with new data when submission is made', () => {
-    cy.intercept('GET', '**/submissions').as('getSubmissions');
+    cy.intercept('POST', '**/upload').as('postUpload');
+    cy.intercept('GET', '**/submissions*').as('getSubmissions');
 
     // Fill in student name
     cy.get('#student-input').type(testDataValid.studentName);
@@ -55,6 +56,8 @@ describe('File Upload Success Flow', () => {
 
     // Submit the form
     cy.get('[name="submit"]').click();
+    cy.wait('@postUpload');
+    cy.wait('@getSubmissions');
 
     // Verify success message appears
     cy.get('[role="alert"]').should('be.visible');
