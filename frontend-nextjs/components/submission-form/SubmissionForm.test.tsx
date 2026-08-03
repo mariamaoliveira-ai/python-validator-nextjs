@@ -3,7 +3,7 @@ import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import SubmissionForm from './SubmissionForm'
-import { submitValidation } from '@/lib/validatorApi'
+import { submitValidation } from '../../lib/validatorApi'
 
 const mockPush = vi.fn()
 
