@@ -5,9 +5,28 @@ import { vi } from 'vitest'
 import SubmissionForm from './SubmissionForm'
 import { submitValidation } from '../../lib/validatorApi'
 
-vi.mock('../../api/validatorApi')
+const mockPush = vi.fn()
+
+vi.mock('next/navigation', () => ({
+    useRouter: () => ({
+        push: mockPush,
+        replace: vi.fn(),
+        prefetch: vi.fn(),
+        back: vi.fn(),
+        forward: vi.fn(),
+        refresh: vi.fn(),
+    }),
+    usePathname: () => '/',
+    useSearchParams: () => new URLSearchParams(),
+}))
+
+vi.mock('../../lib/validatorApi')
 
 describe('SubmissionForm', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
 
     describe('When user submits valid form', ()=>{
 
