@@ -5,7 +5,7 @@ A web application that validates and corrects Python scripts using static analys
 ## Stack
 
 - **Backend:** FastAPI, SQLAlchemy, Alembic, SQLite
-- **Frontend:** React, TypeScript, Vite
+- **Frontend:** React, Next.js, TypeScript
 - **Tests:** Pytest (unit + integration), Vitest + React Testing Library (components), Cypress (E2E)
 - **Infrastructure:** Docker, Docker Compose
 
@@ -33,7 +33,10 @@ docker compose exec backend pytest
 
 **Frontend (unit/component)**
 ```bash
-docker compose exec frontend npm run test
+git config --global --add safe.directory "$PWD"
+cd frontend-nextjs
+npm ci
+npm run test:run
 ```
 
 **E2E**
@@ -45,10 +48,10 @@ npm run cypress:run    # headless
 ## Project Structure
 
 ```
-python-validator/
-├── backend/       # FastAPI app
-├── frontend/      # React app
-├── e2e/           # Cypress specs
+python-validator-nextjs/
+├── backend/           # FastAPI app
+├── frontend-nextjs/   # Next.js app
+├── functional-tests/  # Cypress E2E specs
 └── docker-compose.yml
 ```
 
