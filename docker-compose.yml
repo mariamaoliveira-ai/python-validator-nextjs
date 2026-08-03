@@ -1,0 +1,26 @@
+# docker-compose.yml
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"        # host:container
+    volumes:
+      - sqlite_data:/app/data   # persist the database file
+    environment:
+      - DATABASE_URL=sqlite:///./data/sql_app.db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://localhost:8000
+    ports:
+      - "3000:80"          # host port 3000 → nginx port 80 inside container
+    depends_on:
+      - backend
+
+volumes:
+  sqlite_data:             # named volume — survives container restarts/rebuilds
