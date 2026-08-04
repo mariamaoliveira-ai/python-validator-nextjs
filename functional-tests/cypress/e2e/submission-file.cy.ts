@@ -62,7 +62,7 @@ describe('File Upload Success Flow', () => {
     cy.get('[role="alert"]').should('contain', 'File executed successfully and passed all tests.');
 
     // Verify that the new submission appears in the table
-    cy.get('table').contains('th', testDataValid.studentName).should('exist');
+    cy.get('table').contains('th', uniqueStudentName).should('exist');
     cy.get('table').contains('td', testDataValid.filename).should('exist');
     cy.get('table').contains('td', 'SUCCESS').should('exist');
     cy.get('table').contains('td', 'File executed successfully and passed all tests.').should('exist');
