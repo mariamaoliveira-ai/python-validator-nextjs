@@ -37,6 +37,7 @@ export default function LoginPage(){
                     variant="outlined" 
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
+                    data-testid='username-input'
                 />
                 <TextField 
                     label="Password" 
@@ -44,10 +45,12 @@ export default function LoginPage(){
                     type="password" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    data-testid='password-input'
                 />
                 <Button 
                     type="submit" 
                     variant="contained"
+                    data-testid="login-button"
                 >
                     Login
                 </Button>
