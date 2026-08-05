@@ -1,4 +1,4 @@
-describe('File Upload Success Flow', () => {
+describe('File Upload Flow', () => {
   const testDataValid = {
     studentName: 'John Doe',
     filename: 'sum_two_numbers.py',
@@ -10,7 +10,7 @@ describe('File Upload Success Flow', () => {
   };
 
   beforeEach(() => {
-    cy.visit('/');
+    cy.login()
   });
 
   it('should display success message after uploading and submitting a valid Python file', () => {
