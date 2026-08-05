@@ -26,6 +26,7 @@ export default function DashboardHeader() {
                 <Button onClick={handleLogout}
                     variant="contained"
                     color="error"
+                    data-testid="logout-button"
                 >
                     Logout
                 </Button>

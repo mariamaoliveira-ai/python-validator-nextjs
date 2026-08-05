@@ -1,4 +1,4 @@
-describe('Login Authentication Flow', () => {
+describe('Authentication Flow', () => {
 
     const validCredentials = {
         username: 'demo',
@@ -34,6 +34,12 @@ describe('Login Authentication Flow', () => {
         .should('be.visible')
         .and('contain', 'Invalid username or password');
 
+        cy.url().should('include', '/login');
+    });
+
+    it('should logout successfully and redirect to login page', () => {
+        cy.login();
+        cy.get('[data-testid="logout-button"]').click();
         cy.url().should('include', '/login');
     });
 
