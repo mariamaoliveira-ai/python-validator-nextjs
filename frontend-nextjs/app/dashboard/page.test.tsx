@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import DashboardPage from './page'
 import { getSubmissions } from '../../lib/validatorApi'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
@@ -31,6 +32,31 @@ vi.mock('@/lib/login', () => ({
     }),
 }));
 
+function renderWithClient(ui: React.ReactElement) {
+    const testQueryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false, // Disables retries so tests fail immediately on error
+            },
+        },
+    })
+    
+    const { rerender, ...result } = render(
+        <QueryClientProvider client={testQueryClient}>
+            {ui}
+        </QueryClientProvider>
+    )
+    return {
+        ...result,
+        rerender: (rerenderUi: React.ReactElement) =>
+            rerender(
+                <QueryClientProvider client={testQueryClient}>
+                    {rerenderUi}
+                </QueryClientProvider>
+            ),
+    }
+}
+
 describe('Dashboard Page', () => {
 
     beforeEach(() => {
@@ -41,7 +67,7 @@ describe('Dashboard Page', () => {
    
         vi.mocked(getSubmissions).mockResolvedValueOnce([])
         const Component = await DashboardPage()
-        render(Component)
+        renderWithClient(Component)
 
         expect(await screen.findByText(/python validator/i)).toBeInTheDocument()
         expect(await screen.findByRole('button', { name: /logout/i })).toBeInTheDocument()
@@ -51,7 +77,7 @@ describe('Dashboard Page', () => {
 
        vi.mocked(getSubmissions).mockResolvedValueOnce([])
         const Component = await DashboardPage()
-        render(Component)
+        renderWithClient(Component)
 
         const logoutButton = await screen.findByRole('button', { name: /logout/i })
         const user = userEvent.setup()

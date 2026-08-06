@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import SubmissionForm from './SubmissionForm'
 import { submitValidation } from '../../lib/validatorApi'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const mockPush = vi.fn()
 
@@ -22,6 +23,31 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('../../lib/validatorApi')
 
+function renderWithClient(ui: React.ReactElement) {
+    const testQueryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false, // Disables retries so tests fail immediately on error
+            },
+        },
+    })
+    
+    const { rerender, ...result } = render(
+        <QueryClientProvider client={testQueryClient}>
+            {ui}
+        </QueryClientProvider>
+    )
+    return {
+        ...result,
+        rerender: (rerenderUi: React.ReactElement) =>
+            rerender(
+                <QueryClientProvider client={testQueryClient}>
+                    {rerenderUi}
+                </QueryClientProvider>
+            ),
+    }
+}
+
 describe('SubmissionForm', () => {
 
     beforeEach(() => {
@@ -31,7 +57,7 @@ describe('SubmissionForm', () => {
     describe('When user submits valid form', ()=>{
 
         it('should render name text field, file input and submit button when component loads', ()=>{
-            render(<SubmissionForm/>)
+            renderWithClient(<SubmissionForm/>)
 
             expect(screen.getByRole('textbox', { name: /student name/i })).toBeInTheDocument()
             expect(screen.getByTestId('file-upload')).toBeInTheDocument()
@@ -48,7 +74,7 @@ describe('SubmissionForm', () => {
                 execution_status: 'Executed',
             })
 
-            render(<SubmissionForm/>)
+            renderWithClient(<SubmissionForm/>)
 
             const nameInput = screen.getByRole('textbox', { name: /student name/i })
             const fileInput = screen.getByTestId('file-upload')
@@ -79,7 +105,7 @@ describe('SubmissionForm', () => {
                 execution_status: 'Executed',
             })
 
-            render(<SubmissionForm onSubmitComplete={onSubmitComplete}/>)
+            renderWithClient(<SubmissionForm onSubmitComplete={onSubmitComplete}/>)
 
             await user.type(screen.getByRole('textbox', { name: /student name/i }), 'John Doe')
             await user.upload(screen.getByTestId('file-upload'), new File(['print("Hello World")'], 'hello.py', { type: 'text/x-python' }))
@@ -95,7 +121,7 @@ describe('SubmissionForm', () => {
 
             mockedSubmit.mockRejectedValueOnce(new Error('Execution failed with error: SyntaxError: invalid syntax'))
 
-            render(<SubmissionForm onSubmitComplete={onSubmitComplete}/>)
+            renderWithClient(<SubmissionForm onSubmitComplete={onSubmitComplete}/>)
 
             await user.type(screen.getByRole('textbox', { name: /student name/i }), 'John Doe')
             await user.upload(screen.getByTestId('file-upload'), new File(['print("Hello World"'], 'hello.py', { type: 'text/x-python' }))
@@ -110,7 +136,7 @@ describe('SubmissionForm', () => {
 
             mockedSubmit.mockRejectedValueOnce(new Error('Execution failed with error: SyntaxError: invalid syntax'))
 
-            render(<SubmissionForm/>)
+            renderWithClient(<SubmissionForm/>)
 
             const nameInput = screen.getByRole('textbox', { name: /student name/i })
             const fileInput = screen.getByTestId('file-upload')

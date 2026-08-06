@@ -1,6 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SubmissionTable from './SubmissionTable'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getSubmissions } from '@/lib/validatorApi';
+import { vi } from 'vitest';
+
+vi.mock('@/lib/validatorApi', () => ({
+  getSubmissions: vi.fn(),
+}));
 
 const fakeSubmissions = [
   {
@@ -21,13 +28,41 @@ const fakeSubmissions = [
 
 const emptySubmissions: any[] = [];
 
+function renderWithClient(ui: React.ReactElement) {
+    const testQueryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false, // Disables retries so tests fail immediately on error
+            },
+        },
+    })
+    
+    const { rerender, ...result } = render(
+        <QueryClientProvider client={testQueryClient}>
+            {ui}
+        </QueryClientProvider>
+    )
+    return {
+        ...result,
+        rerender: (rerenderUi: React.ReactElement) =>
+            rerender(
+                <QueryClientProvider client={testQueryClient}>
+                    {rerenderUi}
+                </QueryClientProvider>
+            ),
+    }
+}
+
 describe('SubmissionTable', () => {
 
     describe('When user loads the page', () =>{
-        it('should render table with headers and rows if there are submissions', ()=>{
-            render(<SubmissionTable submissions={fakeSubmissions}/>)
+        it('should render table with headers and rows if there are submissions', async ()=>{
+            vi.mocked(getSubmissions).mockResolvedValueOnce(fakeSubmissions)
+            
+            renderWithClient(<SubmissionTable/>)
 
-            expect(screen.getByRole('table')).toBeInTheDocument()
+            expect(await screen.findByRole('table')).toBeInTheDocument()    
+                    
             expect(screen.getByRole('columnheader', { name: /student name/i })).toBeInTheDocument()
             expect(screen.getByRole('columnheader', { name: /file name/i })).toBeInTheDocument()
             expect(screen.getByRole('columnheader', { name: /status/i })).toBeInTheDocument()
@@ -38,17 +73,19 @@ describe('SubmissionTable', () => {
             expect(screen.getByRole('row', { name: /john doe solution_2.py failed an error occurred during execution 23-07-2026 17:21:09/i })).toBeInTheDocument()
         });
 
-        it('should render text in green if status is SUCCESS and in red if status is FAILURE', ()=>{
-            render(<SubmissionTable submissions={fakeSubmissions}/>)
+        it('should render text in green if status is SUCCESS and in red if status is FAILURE', async ()=>{
+            vi.mocked(getSubmissions).mockResolvedValueOnce(fakeSubmissions)
+            renderWithClient(<SubmissionTable/>)
 
-            expect(screen.getByText('SUCCESS')).toHaveClass('text-green-800')
-            expect(screen.getByText('FAILED')).toHaveClass('text-red-800')
+            expect(await screen.findByText('SUCCESS')).toHaveClass('text-green-800')
+            expect(await screen.findByText('FAILED')).toHaveClass('text-red-800')
         });
 
-        it('It show a message if there are no submissions', ()=>{
-            render(<SubmissionTable submissions={emptySubmissions}/>)
+        it('It show a message if there are no submissions', async ()=>{
+            vi.mocked(getSubmissions).mockResolvedValueOnce(emptySubmissions)
+            renderWithClient(<SubmissionTable/>)
 
-            expect(screen.getByText(/no submissions found/i)).toBeInTheDocument()
+            expect(await screen.getByText(/no submissions found/i)).toBeInTheDocument()
         });
     })
 })
