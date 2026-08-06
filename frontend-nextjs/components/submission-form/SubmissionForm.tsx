@@ -4,40 +4,44 @@ import { Alert, Box, Button, CircularProgress, Stack, TextField } from '@mui/mat
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {useRouter} from 'next/navigation'
 import { useState } from 'react'
-import { submitValidation } from '../../lib/validatorApi'
+import { submitValidation, ValidationRequest } from '../../lib/validatorApi'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 
 function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void }) {
 
     const router = useRouter()
 
-    const [isLoading, setIsLoading] = useState(false)
     const [studentName, setStudentName] = useState('')
     const [file, setFile] = useState<File | null>(null)
     const [fileInputKey, setFileInputKey] = useState(0)
     const [responseMessage, setResponseMessage] = useState('')
     const [statusMessage, setStatusMessage] = useState<'success' | 'error'>('success')
 
-
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        try{
-            setIsLoading(true)
-            const response = await submitValidation({ studentName, file: file! })
+    const queryClient = useQueryClient()
+    const {mutate, isPending} = useMutation({
+        mutationFn: (payload: ValidationRequest) => submitValidation(payload),
+        onSuccess: (data) => {
             setStatusMessage('success')
-            setResponseMessage(response.message)
-            router.refresh()
-        }catch(error){
+            setResponseMessage(data.message)
+            queryClient.invalidateQueries({ queryKey: ['submissions'] })
+        },
+        onError: (error: any) => {
             setStatusMessage('error')
-            setResponseMessage(`Submission Failed: ${error}`)
-            router.refresh()
-        }finally{
-            setIsLoading(false)
+            setResponseMessage(`Submission Failed: ${error.message}`)
+            queryClient.invalidateQueries({ queryKey: ['submissions'] })
+        },
+        onSettled: () => {
             setStudentName('')
             setFile(null)
             setFileInputKey(k => k + 1)
             onSubmitComplete?.()
         }
+    })
+
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        mutate({ studentName, file: file! })
     }
     
 
@@ -85,10 +89,10 @@ function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void })
                         variant="contained"
                         type="submit"
                         name="submit"
-                        disabled={isLoading}
-                        startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : undefined}
+                        disabled={isPending}
+                        startIcon={isPending ? <CircularProgress size={16} color="inherit" /> : undefined}
                     >
-                        {isLoading ? 'Submitting...' : 'Submit'}
+                        {isPending ? 'Submitting...' : 'Submit'}
                     </Button>
                 </Stack>
             </Box>

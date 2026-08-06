@@ -1,4 +1,6 @@
 
+'use client';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,10 +9,23 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { format } from 'date-fns';
-import { type Submission } from '../../lib/validatorApi';
+import { getSubmissions, Submission} from '../../lib/validatorApi';
+import { useQuery } from '@tanstack/react-query';
+
+function orderSubmissionsByDate(submissions: Submission[]): Submission[] {
+  return submissions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+}
+
+function SubmissionTable() {
+  const {data: submissions = []} = useQuery({
+    queryKey: ['submissions'],
+    queryFn: async () => { 
+      const unorderedSubmissions = await getSubmissions();
+      return orderSubmissionsByDate(unorderedSubmissions);
+    },
+  })
 
 
-function SubmissionTable({ submissions }: { submissions: Submission[] }) {
   if (submissions.length === 0) {
     return <p>No submissions found</p>;
   }
