@@ -24,7 +24,8 @@ def test_shouldSaveSubmissionDetailsInDatabase(db_session):
         student_name = "Aluno Mock",
         file_name = "solucao.py",
         status = "SUCCESS",
-        result_execution = "Resultado da execução do código"
+        stdout = "Resultado da execução do código",
+        stderr = "Sem erros"
     )
     
     db_session.add(new_submission)
@@ -42,14 +43,16 @@ def test_shouldLoadAllSubmissionDetailsFromDatabase(db_session):
         student_name = "Aluno Mock",
         file_name = "solucao.py",
         status = "SUCCESS",
-        result_execution = "Resultado da execução do código"
+        stdout = "Resultado da execução do código",
+        stderr = "Sem erros"
     )
     
     new_submission_2 = SubmissionModel(
         student_name = "Aluno Mock 2",
         file_name = "solucao2.py",
         status = "FAILURE",
-        result_execution = "Resultado da execução do código 2"
+        stdout = "Resultado da execução do código 2",
+        stderr = "Erros encontrados"
     )
     
     db_session.add(new_submission_1)
@@ -70,7 +73,8 @@ def test_shouldLoadSubmissionDetailsByIdFromDatabase(db_session):
         student_name = "Aluno Mock",
         file_name = "solucao.py",
         status = "SUCCESS",
-        result_execution = "Resultado da execução do código"
+        stdout = "Resultado da execução do código",
+        stderr = "Sem erros"
     )
     
     db_session.add(new_submission)

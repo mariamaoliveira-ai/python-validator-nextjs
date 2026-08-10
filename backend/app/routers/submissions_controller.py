@@ -47,7 +47,7 @@ def upload_file(
             raise HTTPException(
                 status_code=400,
                 detail={
-                    "message": submission.result_execution,
+                    "message": submission.stderr,
                     "execution_status": "Failed"
                 }
             )
@@ -60,7 +60,7 @@ def upload_file(
         })
 
     return {
-        "message": submission.result_execution,
+        "message": submission.stdout,
         "execution_status": "Executed"
     }
         
@@ -88,5 +88,12 @@ def get_all_submissions(
             "message": str(e),
             "execution_status": "Failed"
         })
-
-  
+        
+        
+@router.get("/submissions/{submission_id}", response_model=SubmissionResponse)
+def get_submission_by_id(
+    submission_id: int,
+    service: SubmissionService = Depends(get_submission_service)
+):
+   submission = service.loadSubmissionById(submissionId=submission_id)
+   return submission

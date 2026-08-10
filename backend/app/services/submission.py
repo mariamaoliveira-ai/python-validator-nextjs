@@ -32,7 +32,8 @@ class SubmissionService:
             student_name=studentName,
             file_name=fileName,
             status=status,
-            result_execution=resultExecution
+            stdout=resultExecution if status == "SUCCESS" else "",
+            stderr=resultExecution if status == "FAILED" else ""
         )
 
         self.db.add(submission)

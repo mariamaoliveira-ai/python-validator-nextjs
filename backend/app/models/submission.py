@@ -10,4 +10,5 @@ class SubmissionModel(Base):
     file_name = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     status = Column(String(255), nullable= False)
-    result_execution = Column(Text, nullable=False)
+    stdout = Column(Text, nullable=True)
+    stderr = Column(Text, nullable=True)

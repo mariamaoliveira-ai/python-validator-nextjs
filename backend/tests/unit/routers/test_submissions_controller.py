@@ -16,7 +16,8 @@ def test_UploadFileWhenValidPayload(mockProcessFile):
         id=1,
         student_name="Maria",
         file_name="my_python_file.py",
-        result_execution="Hello, World!",
+        stdout="Hello, World!",
+        stderr="",
         status="SUCCESS"
     )
     
@@ -45,7 +46,8 @@ def test_UploadFileWhenInvalidOutput(mockProcessFile):
         id=1,
         student_name="Maria",
         file_name="my_python_file.py",
-        result_execution="Expected output: 5 but got result: Hello, World!",
+        stdout="",
+        stderr="Expected output: 5 but got result: Hello, World!",
         status="FAILED"
     )
     payload = {
@@ -73,7 +75,8 @@ def test_UploadFileWhenExecutionError(mockProcessFile):
         id=1,
         student_name="Maria",
         file_name="my_python_file.py",
-        result_execution="Execution failed with error: SyntaxError: invalid syntax",
+        stdout="",
+        stderr="Execution failed with error: SyntaxError: invalid syntax",
         status="FAILED"
     )
     payload = {
@@ -101,7 +104,8 @@ def test_UploadFileWhenTimeoutError(mockProcessFile):
         id=1,
         student_name="Maria",
         file_name="my_python_file.py",
-        result_execution="Execution timed out after 3 seconds",
+        stdout="",
+        stderr="Execution timed out after 3 seconds",
         status="FAILED"
     )
     payload = {
@@ -176,7 +180,8 @@ def test_GetAllSubmissions(mockLoadAllSubmissions):
             id=1,
             student_name="Maria",
             file_name="my_python_file.py",
-            result_execution="Executed successfully",
+            stdout="Executed successfully",
+            stderr="",
             status="SUCCESS",
             created_at=datetime(2026, 1, 1, 12, 0, 0),
         )
@@ -200,3 +205,27 @@ def test_GetAllSubmissionsWhenErrorOccurs(mockLoadAllSubmissions):
         }
     }
     mockLoadAllSubmissions.assert_called_once()
+    
+    
+@patch("app.routers.submissions_controller.SubmissionService.loadSubmissionById")   
+def test_GetSubmissionById(mockLoadSubmissionById):
+    mockLoadSubmissionById.return_value = SubmissionModel(
+        id=1,
+        student_name="Maria",
+        file_name="my_python_file.py",
+        stdout="Executed successfully",
+        stderr="Executed successfully",
+        status="SUCCESS",
+        created_at=datetime(2026, 1, 1, 12, 0, 0),
+    )
+    response = client.get("/submissions/1")
+    body = response.json()
+    assert response.status_code == 200
+    assert body["id"] == 1
+    assert body["student_name"] == "Maria"
+    assert body["file_name"] == "my_python_file.py"
+    assert body["stdout"] == "Executed successfully"
+    assert body["stderr"] == "Executed successfully"
+    assert body["status"] == "SUCCESS"
+    assert body["created_at"] == "2026-01-01T12:00:00"
+    mockLoadSubmissionById.assert_called_once_with(submissionId=1)

@@ -43,8 +43,8 @@ def test_shouldSaveSubmissionOnExecutionFailure():
     assert mockDB.refresh.called
     assert result.status == "FAILED"
     assert result.student_name == "Aluno Mock"
-    assert result.result_execution == "execution failed"
-
+    assert result.stdout == ""
+    assert result.stderr == "execution failed"
 
 def test_shouldLoadAllSubmissions():
 
