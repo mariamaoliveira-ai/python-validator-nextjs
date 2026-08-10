@@ -41,9 +41,11 @@ class SubmissionService:
 
         return submission
 
+
     def loadAllSubmissions(self):
         submissions = self.db.query(SubmissionModel).all()
         return submissions
+
 
     def loadSubmissionById(self, submissionId: int):
         submission = self.db.query(SubmissionModel).filter(
