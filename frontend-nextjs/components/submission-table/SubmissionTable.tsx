@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { format } from 'date-fns';
-import { getSubmissions, Submission} from '../../lib/validatorApi';
+import { getSubmissions, Submission } from '../../lib/validatorApi';
 import { useQuery } from '@tanstack/react-query';
 
 function orderSubmissionsByDate(submissions: Submission[]): Submission[] {
@@ -17,13 +17,11 @@ function orderSubmissionsByDate(submissions: Submission[]): Submission[] {
 }
 
 function SubmissionTable() {
-  const {data: submissions = []} = useQuery({
+  const { data: submissions = [] } = useQuery({
     queryKey: ['submissions'],
-    queryFn: async () => { 
-      const unorderedSubmissions = await getSubmissions();
-      return orderSubmissionsByDate(unorderedSubmissions);
-    },
-  })
+    queryFn: getSubmissions,
+    select: orderSubmissionsByDate,
+  });
 
 
   if (submissions.length === 0) {

@@ -1,4 +1,4 @@
-import DashboardHeader from "@/components/dashboard-header/Dashboard-header";
+import DashboardHeader from "@/components/dashboard-header/DashboardHeader";
 import SubmissionForm from "@/components/submission-form/SubmissionForm";
 import SubmissionTable from "@/components/submission-table/SubmissionTable";
 import { getQueryClient } from "@/lib/get-query-client";
