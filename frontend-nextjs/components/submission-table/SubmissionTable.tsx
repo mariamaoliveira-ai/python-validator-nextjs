@@ -1,22 +1,19 @@
 
 'use client';
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import { format } from 'date-fns';
 import { getSubmissions, Submission } from '../../lib/validatorApi';
 import { useQuery } from '@tanstack/react-query';
+import { Button, Table, TableBody, TableContainer, TableHead, TableCell, Paper, TableRow } from '@mui/material';
+import {useRouter} from 'next/navigation';
 
 function orderSubmissionsByDate(submissions: Submission[]): Submission[] {
   return submissions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 }
 
 function SubmissionTable() {
+  const userRouter = useRouter();
+
   const { data: submissions = [] } = useQuery({
     queryKey: ['submissions'],
     queryFn: getSubmissions,
@@ -36,6 +33,7 @@ function SubmissionTable() {
             <TableCell align="center">File Name</TableCell>
             <TableCell align="center">Status</TableCell>
             <TableCell align="center" sx={{ width: 200 }}>Created At</TableCell>
+            <TableCell align="center">Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -62,6 +60,9 @@ function SubmissionTable() {
               </TableCell>
               <TableCell align="center">
                 {format(new Date(row.created_at), 'dd-MM-yyyy HH:mm:ss')}
+              </TableCell>
+              <TableCell align="center">
+                <Button variant="outlined" size="small" onClick={()=> userRouter.push(`/submissions/${row.id}`)}>Details</Button>
               </TableCell>
             </TableRow>
           ))}

@@ -5,6 +5,20 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { getSubmissions } from '@/lib/validatorApi';
 import { vi } from 'vitest';
 
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+    useRouter: () => ({
+        push: mockPush,
+        replace: vi.fn(),
+        prefetch: vi.fn(),
+        back: vi.fn(),
+        forward: vi.fn(),
+        refresh: vi.fn(),
+    }),
+    usePathname: () => '/',
+    useSearchParams: () => new URLSearchParams(),
+}))
+
 vi.mock('@/lib/validatorApi', () => ({
   getSubmissions: vi.fn(),
 }));
@@ -67,9 +81,10 @@ describe('SubmissionTable', () => {
             expect(screen.getByRole('columnheader', { name: /file name/i })).toBeInTheDocument()
             expect(screen.getByRole('columnheader', { name: /status/i })).toBeInTheDocument()
             expect(screen.getByRole('columnheader', { name: /created at/i })).toBeInTheDocument()
+            expect(screen.getByRole('columnheader', { name: /details/i })).toBeInTheDocument()
 
-            expect(screen.getByRole('row', { name: /john doe solution.py success 23-07-2026 17:21:09/i })).toBeInTheDocument()
-            expect(screen.getByRole('row', { name: /john doe solution_2.py failed 23-07-2026 17:21:09/i })).toBeInTheDocument()
+            expect(screen.getByRole('row', { name: /john doe solution.py success 23-07-2026 17:21:09 details/i })).toBeInTheDocument()
+            expect(screen.getByRole('row', { name: /john doe solution_2.py failed 23-07-2026 17:21:09 details/i })).toBeInTheDocument()
         });
 
         it('should render text in green if status is SUCCESS and in red if status is FAILURE', async ()=>{
