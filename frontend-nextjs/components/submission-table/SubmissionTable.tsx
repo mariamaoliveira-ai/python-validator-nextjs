@@ -37,7 +37,6 @@ function SubmissionTable() {
             <TableCell>Student Name</TableCell>
             <TableCell align="center">File Name</TableCell>
             <TableCell align="center">Status</TableCell>
-            <TableCell align="center" sx={{ width: 400 }}>Result Execution</TableCell>
             <TableCell align="center" sx={{ width: 200 }}>Created At</TableCell>
           </TableRow>
         </TableHead>
@@ -62,9 +61,6 @@ function SubmissionTable() {
                 }>
                   {row.status}
                 </span>
-              </TableCell>
-              <TableCell align="left" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {row.result_execution}
               </TableCell>
               <TableCell align="center">
                 {format(new Date(row.created_at), 'dd-MM-yyyy HH:mm:ss')}

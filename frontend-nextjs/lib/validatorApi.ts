@@ -11,12 +11,17 @@ export type ValidationResponse = {
 };
 
 export type Submission = {
+    id: string;
     student_name: string;
     file_name: string;
     status: string;
-    result_execution: string;
     created_at: string | number | Date;
 };
+
+export type SubmissionsWithDetails = Submission & {
+    stdout: string;
+    stderr: string;
+}
 
 
 export async function submitValidation(
@@ -46,4 +51,13 @@ export async function getSubmissions(): Promise<Submission[]> {
         throw new Error(`HTTP error! status: ${response.status}`);
     }   
     return response.json() as Promise<Submission[]>;
+}
+
+
+export async function getSubmissionDetails(submissionId: string): Promise<SubmissionsWithDetails> {
+    const response = await fetch(`${API_BASE_URL}/submissions/${submissionId}`, { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }   
+    return response.json() as Promise<SubmissionsWithDetails>;
 }
