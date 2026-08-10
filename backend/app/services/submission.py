@@ -7,40 +7,45 @@ from app.services.service_exceptions import ExecutionFileError, InvalidOutputErr
 
 
 class SubmissionService:
-    
+
     def __init__(self, db: Session, executor: FileExecutor):
         self.db = db
         self.executor = executor
-        
+
     def processSubmission(self, studentName: str, fileName: str, fileBytes: bytes):
         status = "FAILED"
-        resultExecution = "" 
-        
+        resultExecution = ""
+
         try:
             result = self.executor.executeFile(fileContent=fileBytes)
-            
+
             if result:
                 status = "SUCCESS"
                 resultExecution = "File executed successfully and passed all tests."
-          
+
         except (InvalidOutputError, ExecutionFileError, TimeoutError) as e:
-            resultExecution = str(e)    
+            resultExecution = str(e)
         except Exception as e:
             resultExecution = str(e)
-        
+
         submission = SubmissionModel(
             student_name=studentName,
             file_name=fileName,
             status=status,
             result_execution=resultExecution
         )
-        
+
         self.db.add(submission)
         self.db.commit()
         self.db.refresh(submission)
-        
+
         return submission
-    
+
     def loadAllSubmissions(self):
         submissions = self.db.query(SubmissionModel).all()
         return submissions
+
+    def loadSubmissionById(self, submissionId: int):
+        submission = self.db.query(SubmissionModel).filter(
+            SubmissionModel.id == submissionId).first()
+        return submission

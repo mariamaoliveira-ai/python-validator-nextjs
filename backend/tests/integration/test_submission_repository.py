@@ -62,5 +62,25 @@ def test_shouldLoadAllSubmissionDetailsFromDatabase(db_session):
     assert db_submissions[0].status == "SUCCESS"
     assert db_submissions[1].student_name == "Aluno Mock 2"
     assert db_submissions[1].status == "FAILURE"
+    
+    
+def test_shouldLoadSubmissionDetailsByIdFromDatabase(db_session):
+    
+    new_submission = SubmissionModel(
+        student_name = "Aluno Mock",
+        file_name = "solucao.py",
+        status = "SUCCESS",
+        result_execution = "Resultado da execução do código"
+    )
+    
+    db_session.add(new_submission)
+    db_session.commit()
+    db_session.refresh(new_submission)
+    
+    db_submission = db_session.query(SubmissionModel).filter(SubmissionModel.id == new_submission.id).first()
+    
+    assert db_submission is not None
+    assert db_submission.student_name == "Aluno Mock"
+    assert db_submission.status == "SUCCESS"
 
     
