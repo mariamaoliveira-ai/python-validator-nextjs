@@ -10,6 +10,7 @@ class CreateFileUpload(BaseModel):
 class SubmissionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int = Field(..., description="Unique identifier for the submission")
     student_name: str = Field(..., description="Name of the student who submitted the file")
     file_name: str = Field(..., description="Name of the submitted file")
     status: str = Field(..., description="Status of the submission (e.g., SUCCESS, FAILURE)")
