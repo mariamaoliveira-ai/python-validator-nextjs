@@ -5,7 +5,6 @@ export default async function SubmissionPage({ params }) {
 
   return (
     <div>
-      <h1>Submission Details</h1>
       <SubmissionDetails id={id} />
     </div>
   );
