@@ -2,15 +2,12 @@
 
 import { Alert, Box, Button, CircularProgress, Stack, TextField } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import {useRouter} from 'next/navigation'
 import { useState } from 'react'
 import { submitValidation, ValidationRequest } from '../../lib/validatorApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 
-function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void }) {
-
-    const router = useRouter()
+function SubmissionForm() {
 
     const [studentName, setStudentName] = useState('')
     const [file, setFile] = useState<File | null>(null)
@@ -35,7 +32,6 @@ function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void })
             setStudentName('')
             setFile(null)
             setFileInputKey(k => k + 1)
-            onSubmitComplete?.()
         }
     })
 
