@@ -13,14 +13,18 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend-nextjs   # Updated folder path
       dockerfile: Dockerfile
       args:
-        - VITE_API_BASE_URL=http://localhost:8000
+        # Browser-facing requests hit host port 8000
+        - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
     ports:
-      - "3000:80"          # host port 3000 → nginx port 80 inside container
+      - "3000:3000"                # Next.js Node server runs on port 3000
+    environment:
+      # Internal container-to-container requests (for Next.js SSR / Server Components)
+      - INTERNAL_BACKEND_URL=http://backend:8000
     depends_on:
       - backend
 
 volumes:
-  sqlite_data:             # named volume — survives container restarts/rebuilds
+  sqlite_data:
