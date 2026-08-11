@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from app.services.submission import SubmissionService
 
 
-def test_shouldSaveSubmissionOnExecutionSuccess():
+def test_ProcessSubmissionWhenExecutionSucceeds():
 
     mockDB = MagicMock()
     mockExecutor = MagicMock()
@@ -24,7 +24,7 @@ def test_shouldSaveSubmissionOnExecutionSuccess():
     assert result.student_name == "Aluno Mock"
 
 
-def test_shouldSaveSubmissionOnExecutionFailure():
+def test_ProcessSubmissionWhenExecutionFails():
 
     mockDB = MagicMock()
     mockExecutor = MagicMock()
@@ -46,7 +46,7 @@ def test_shouldSaveSubmissionOnExecutionFailure():
     assert result.stdout == ""
     assert result.stderr == "execution failed"
 
-def test_shouldLoadAllSubmissions():
+def test_ProcessSubmissionWhenLoadingAllSubmissions():
 
     mockDB = MagicMock()
     mockExecutor = MagicMock()
@@ -73,7 +73,7 @@ def test_shouldLoadAllSubmissions():
     assert result[1].status == "FAILURE"
 
 
-def test_shouldLoadAllSubmissionsFailure():
+def test_LoadAllSubmissionsWhenQueryFails():
 
     mockDB = MagicMock()
     mockExecutor = MagicMock()
@@ -94,7 +94,7 @@ def test_shouldLoadAllSubmissionsFailure():
     assert str(e.value) == "Database query failed"
 
 
-def test_shouldLoadSubmissionById():
+def test_LoadSubmissionByIdWhenSubmissionExists():
 
     mockDB = MagicMock()
     mockExecutor = MagicMock()
@@ -111,3 +111,32 @@ def test_shouldLoadSubmissionById():
     assert mockDB.query.called
     assert result.student_name == "Aluno Mock"
     assert result.status == "SUCCESS"
+    
+
+def test_LoadSubmissionByIdWhenSubmissionDoesNotExist():
+
+    mockDB = MagicMock()
+    mockExecutor = MagicMock()
+
+    mockDB.query.return_value.filter.return_value.first.return_value = None
+
+    service = SubmissionService(db=mockDB, executor=mockExecutor)
+    result = service.loadSubmissionById(submissionId=1)
+
+    assert mockDB.query.called
+    assert result is None
+    
+
+def test_LoadSubmissionByIdWhenQueryFails():
+
+    mockDB = MagicMock()
+    mockExecutor = MagicMock()
+
+    mockDB.query.side_effect = Exception("Database query failed")
+
+    service = SubmissionService(db=mockDB, executor=mockExecutor)
+    with pytest.raises(Exception) as e:
+        service.loadSubmissionById(submissionId=1)
+    assert str(e.value) == "Database query failed"
+    
+

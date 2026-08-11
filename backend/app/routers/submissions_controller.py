@@ -95,5 +95,12 @@ def get_submission_by_id(
     submission_id: int,
     service: SubmissionService = Depends(get_submission_service)
 ):
-   submission = service.loadSubmissionById(submissionId=submission_id)
-   return submission
+    try:
+        submission = service.loadSubmissionById(submissionId=submission_id)
+        return submission
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={
+            "message": str(e),
+            "execution_status": "Failed"
+        })
+   

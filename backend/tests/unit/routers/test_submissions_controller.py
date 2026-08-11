@@ -229,3 +229,18 @@ def test_GetSubmissionById(mockLoadSubmissionById):
     assert body["status"] == "SUCCESS"
     assert body["created_at"] == "2026-01-01T12:00:00"
     mockLoadSubmissionById.assert_called_once_with(submissionId=1)
+    
+
+@patch("app.routers.submissions_controller.SubmissionService.loadSubmissionById")       
+def test_GetSubmissionByIdWhenErrorOccurs(mockLoadSubmissionById):
+    mockLoadSubmissionById.side_effect = Exception("Unexpected error")
+    response = client.get("/submissions/1")
+    
+    assert response.status_code == 500
+    assert response.json() == {
+        "detail": {
+            "message": "Unexpected error",
+            "execution_status": "Failed"
+        }
+    }
+    mockLoadSubmissionById.assert_called_once_with(submissionId=1)
