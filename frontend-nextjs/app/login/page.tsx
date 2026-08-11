@@ -34,7 +34,7 @@ export default function LoginPage() {
                 </div>
                 <Box component="form" onSubmit={handleLogin}>
                     {errorMessage && (
-                        <Alert severity="error">
+                        <Alert className="mb-10" severity="error">
                             {errorMessage}
                         </Alert>
                     )}

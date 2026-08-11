@@ -14,18 +14,20 @@ export default function LogoutButton() {
         router.push('/login');
     }
 
-    return (<>
-            <div>
+    return (
+        <div className="flex gap-4 mt-5">
+            <div className="flex-1 font-bold">
                 Welcome {user}!
             </div>
             <Button onClick={handleLogout}
                 variant="contained"
                 color="error"
                 data-testid="logout-button"
+                className=""
             >
                 Logout
             </Button>
-            </>
+        </div>
     );
 
 }
