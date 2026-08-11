@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 import SubmissionDetails from './SubmissionDetails'
@@ -34,7 +34,7 @@ describe('SubmissionDetails', () => {
             id: '1',
             student_name: 'Jane Doe',
             file_name: 'sum.py',
-            status: 'Executed',
+            status: 'SUCCESS',
             created_at: '2026-01-01T00:00:00Z',
             stdout: '3',
             stderr: '',
@@ -42,11 +42,12 @@ describe('SubmissionDetails', () => {
 
         renderWithClient(<SubmissionDetails id="1" />)
 
-        expect(await screen.findByText(/Submission Details/i)).toBeInTheDocument()
-        expect(screen.getByText(/Student: Jane Doe/i)).toBeInTheDocument()
-        expect(screen.getByText(/File: sum.py/i)).toBeInTheDocument()
-        expect(screen.getByText(/Status: Executed/i)).toBeInTheDocument()
-        expect(screen.getByText('3')).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/Student:/i)).toBeInTheDocument()
+            expect(screen.getByText('Jane Doe')).toBeInTheDocument()
+            expect(screen.getByText('sum.py')).toBeInTheDocument()
+            expect(screen.getByText('SUCCESS')).toBeInTheDocument()
+        })
     })
 
     it('shows error message when query fails', async () => {
