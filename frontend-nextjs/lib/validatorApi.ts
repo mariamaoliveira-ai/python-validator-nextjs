@@ -21,6 +21,7 @@ export type Submission = {
 export type SubmissionsWithDetails = Submission & {
     stdout: string;
     stderr: string;
+    error_message: string;
 }
 
 

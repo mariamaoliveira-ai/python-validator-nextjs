@@ -1,12 +1,9 @@
 'use client';
 
-import { useParams } from "next/dist/client/components/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getSubmissionDetails } from "@/lib/validatorApi";
 import { format } from 'date-fns';
-import { Card, CardContent, CardHeader, Divider, Typography, Chip, Box, LinearProgress, Alert } from '@mui/material';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Card, CardContent, CardHeader, Typography, Box, LinearProgress, Alert } from '@mui/material';
 
 
 
@@ -109,6 +106,17 @@ export default function SubmissionPage({ id }: { id: string }) {
                             {/* Tailwind for red/pre styling, similar to the FAILED status row */}
                             <pre className="bg-red-50 text-red-900 p-4 rounded-lg font-mono text-sm leading-relaxed whitespace-pre-wrap border border-red-100">
                                 {submissionDetails.stderr || <span className="italic text-gray-500">None</span>}
+                            </pre>
+                        </section>
+
+                        {/* Error Message */}
+                        <section>
+                            <Typography variant="h6" className="font-bold text-gray-900 mb-2">
+                                Error Message
+                            </Typography>
+                            {/* Tailwind for red/pre styling, similar to the FAILED status row */}
+                            <pre className="bg-red-50 text-red-900 p-4 rounded-lg font-mono text-sm leading-relaxed whitespace-pre-wrap border border-red-100">
+                                {submissionDetails.error_message || <span className="italic text-gray-500">None</span>}
                             </pre>
                         </section>
                     </div>

@@ -47,7 +47,7 @@ def upload_file(
             raise HTTPException(
                 status_code=400,
                 detail={
-                    "message": submission.stderr,
+                    "message": submission.error_message,
                     "execution_status": "Failed"
                 }
             )
@@ -60,7 +60,7 @@ def upload_file(
         })
 
     return {
-        "message": submission.stdout,
+        "message": "Succefully Executed!",
         "execution_status": "Executed"
     }
         

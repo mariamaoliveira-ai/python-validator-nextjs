@@ -23,7 +23,7 @@ function SubmissionForm({ onSubmitComplete }: { onSubmitComplete?: () => void })
         mutationFn: (payload: ValidationRequest) => submitValidation(payload),
         onSuccess: (data) => {
             setStatusMessage('success')
-            setResponseMessage(data.message)
+            setResponseMessage(data.execution_status)
             queryClient.invalidateQueries({ queryKey: ['submissions'] })
         },
         onError: (error: any) => {
