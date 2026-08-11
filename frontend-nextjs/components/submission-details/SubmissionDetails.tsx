@@ -55,7 +55,7 @@ export default function SubmissionPage({ id }: { id: string }) {
                     className="p-6 md:px-8 border-b border-gray-100"
                     title={
                         <Typography variant="h5" component="h1" className="font-bold text-gray-950">
-                            Submission Details: <span className="font-mono text-xl text-blue-800 bg-blue-50 px-3 py-1 rounded-md">{submissionDetails.file_name}</span>
+                            Submission Details: <span data-testid="detail-file-name" className="font-mono text-xl text-blue-800 bg-blue-50 px-3 py-1 rounded-md">{submissionDetails.file_name}</span>
                         </Typography>
                     }
                     subheader={

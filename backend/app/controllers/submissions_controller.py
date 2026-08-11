@@ -4,8 +4,6 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models.submission import SubmissionModel
-from app.services.service_exceptions import ExecutionFileError, InvalidOutputError
 from app.services.submission import SubmissionService
 
 from ..schemas.api.submission import CreateFileUpload, SubmissionResponse

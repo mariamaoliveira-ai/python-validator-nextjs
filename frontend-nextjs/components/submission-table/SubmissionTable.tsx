@@ -40,6 +40,7 @@ function SubmissionTable() {
           {submissions.map((row) => (
             <TableRow
               key={`${row.student_name}-${row.created_at}`}
+              data-testid="submission-row"
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
@@ -62,7 +63,11 @@ function SubmissionTable() {
                 {format(new Date(row.created_at), 'dd-MM-yyyy HH:mm:ss')}
               </TableCell>
               <TableCell align="center">
-                <Button variant="outlined" size="small" onClick={()=> userRouter.push(`/submissions/${row.id}`)}>Details</Button>
+                <Button 
+                data-testid="details-button"
+                variant="outlined" 
+                size="small" 
+                onClick={()=> userRouter.push(`/submissions/${row.id}`)}>Details</Button>
               </TableCell>
             </TableRow>
           ))}

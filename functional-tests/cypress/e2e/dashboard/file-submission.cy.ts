@@ -25,7 +25,7 @@ describe('File Upload Flow', () => {
 
     // Verify success message appears
     cy.get('[role="alert"]').should('be.visible');
-    cy.get('[role="alert"]').should('contain', 'File executed successfully and passed all tests.');
+    cy.get('[role="alert"]').should('contain', "Succefully Executed!");
   });
 
 
@@ -59,7 +59,7 @@ describe('File Upload Flow', () => {
 
     // Verify success message appears
     cy.get('[role="alert"]').should('be.visible');
-    cy.get('[role="alert"]').should('contain', 'File executed successfully and passed all tests.');
+    cy.get('[role="alert"]').should('contain', "Succefully Executed!");
 
     // Verify that the new submission appears in the table
     cy.get('table').contains('th', uniqueStudentName).should('exist');
