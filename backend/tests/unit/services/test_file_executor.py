@@ -1,6 +1,6 @@
 import pytest
 from app.services.file_executor import FileExecutor
-from app.services.service_exceptions import ExecutionFileError, InvalidOutputError
+from app.schemas.internal.file_executor import ExecutionStatus
 
 @pytest.fixture
 def fileExecutor():
@@ -18,7 +18,7 @@ def test_ExecuteFileSuccess(fileExecutor):
 
     result = fileExecutor.executeFile(pythonCode)
     
-    assert result is True
+    assert result.status is ExecutionStatus.PASSED
     
     
 def test_ExecuteFileFailure(fileExecutor):
@@ -30,8 +30,9 @@ def test_ExecuteFileFailure(fileExecutor):
         print(result)
     """
      
-    with pytest.raises(InvalidOutputError):
-        fileExecutor.executeFile(pythonCode)
+    result = fileExecutor.executeFile(pythonCode)
+    assert result.status is ExecutionStatus.WRONG_ANSWER
+    assert "Expected output: 5, but got: -1" in result.errorMessage
   
     
 def test_ExecuteFileFailureBySyntaxError(fileExecutor):
@@ -42,8 +43,8 @@ def test_ExecuteFileFailureBySyntaxError(fileExecutor):
         print(result)
     """
     
-    with pytest.raises(ExecutionFileError):
-        fileExecutor.executeFile(pythonCode)
+    result = fileExecutor.executeFile(pythonCode)
+    assert result.status is ExecutionStatus.SYSTEM_ERROR
      
     
 def test_ExecuteFileFailureByTimeOut(fileExecutor):
@@ -52,7 +53,6 @@ def test_ExecuteFileFailureByTimeOut(fileExecutor):
             pass
     """
     
-    with pytest.raises(TimeoutError):
-        fileExecutor.executeFile(pythonCode)
+    result = fileExecutor.executeFile(pythonCode)
+    assert result.status is ExecutionStatus.TIMEOUT
     
-  

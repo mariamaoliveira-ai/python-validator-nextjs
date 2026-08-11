@@ -1,13 +1,17 @@
 import pytest
 from unittest.mock import MagicMock
 from app.services.submission import SubmissionService
+from app.schemas.internal.file_executor import ExecutionStatus, ExecutionResult
 
 
 def test_ProcessSubmissionWhenExecutionSucceeds():
 
     mockDB = MagicMock()
     mockExecutor = MagicMock()
-    mockExecutor.executeFile.return_value = True
+    mockExecutor.executeFile.return_value = ExecutionResult(
+        status=ExecutionStatus.PASSED,
+        stdout=5,
+    )
 
     service = SubmissionService(db=mockDB, executor=mockExecutor)
 
@@ -28,7 +32,10 @@ def test_ProcessSubmissionWhenExecutionFails():
 
     mockDB = MagicMock()
     mockExecutor = MagicMock()
-    mockExecutor.executeFile.side_effect = Exception("execution failed")
+    mockExecutor.executeFile.return_value = ExecutionResult(
+        status=ExecutionStatus.WRONG_ANSWER,
+        stdout='5',
+    )
 
     service = SubmissionService(db=mockDB, executor=mockExecutor)
 
@@ -43,8 +50,8 @@ def test_ProcessSubmissionWhenExecutionFails():
     assert mockDB.refresh.called
     assert result.status == "FAILED"
     assert result.student_name == "Aluno Mock"
-    assert result.stdout == ""
-    assert result.stderr == "execution failed"
+    assert result.stdout == '5'
+
 
 def test_ProcessSubmissionWhenLoadingAllSubmissions():
 
@@ -111,7 +118,7 @@ def test_LoadSubmissionByIdWhenSubmissionExists():
     assert mockDB.query.called
     assert result.student_name == "Aluno Mock"
     assert result.status == "SUCCESS"
-    
+
 
 def test_LoadSubmissionByIdWhenSubmissionDoesNotExist():
 
@@ -125,7 +132,7 @@ def test_LoadSubmissionByIdWhenSubmissionDoesNotExist():
 
     assert mockDB.query.called
     assert result is None
-    
+
 
 def test_LoadSubmissionByIdWhenQueryFails():
 
@@ -138,5 +145,3 @@ def test_LoadSubmissionByIdWhenQueryFails():
     with pytest.raises(Exception) as e:
         service.loadSubmissionById(submissionId=1)
     assert str(e.value) == "Database query failed"
-    
-

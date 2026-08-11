@@ -8,7 +8,7 @@ from app.models.submission import SubmissionModel
 from app.services.service_exceptions import ExecutionFileError, InvalidOutputError
 from app.services.submission import SubmissionService
 
-from ..schemas.submission import CreateFileUpload, SubmissionResponse
+from ..schemas.api.submission import CreateFileUpload, SubmissionResponse
 from ..services.file_executor import FileExecutor
 
 router = APIRouter()

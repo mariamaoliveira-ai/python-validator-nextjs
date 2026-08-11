@@ -1,16 +1,12 @@
+from app.main import app
+from app.models.submission import SubmissionModel
 from datetime import datetime
-
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 
-import pytest
-from app.main import app
-from app.services.service_exceptions import ExecutionFileError, InvalidOutputError
-from app.models.submission import SubmissionModel
-
 client = TestClient(app)
 
-@patch("app.routers.submissions_controller.SubmissionService.processSubmission")
+@patch("app.controllers.submissions_controller.SubmissionService.processSubmission")
 def test_UploadFileWhenValidPayload(mockProcessFile):
     mockProcessFile.return_value = SubmissionModel(
         id=1,
@@ -40,7 +36,7 @@ def test_UploadFileWhenValidPayload(mockProcessFile):
     mockProcessFile.assert_called_once()
 
 
-@patch("app.routers.submissions_controller.SubmissionService.processSubmission")
+@patch("app.controllers.submissions_controller.SubmissionService.processSubmission")
 def test_UploadFileWhenInvalidOutput(mockProcessFile):
     mockProcessFile.return_value = SubmissionModel(
         id=1,
@@ -69,7 +65,7 @@ def test_UploadFileWhenInvalidOutput(mockProcessFile):
     mockProcessFile.assert_called_once()
     
 
-@patch("app.routers.submissions_controller.SubmissionService.processSubmission")
+@patch("app.controllers.submissions_controller.SubmissionService.processSubmission")
 def test_UploadFileWhenExecutionError(mockProcessFile):
     mockProcessFile.return_value = SubmissionModel(
         id=1,
@@ -98,7 +94,7 @@ def test_UploadFileWhenExecutionError(mockProcessFile):
     mockProcessFile.assert_called_once()
     
     
-@patch("app.routers.submissions_controller.SubmissionService.processSubmission")
+@patch("app.controllers.submissions_controller.SubmissionService.processSubmission")
 def test_UploadFileWhenTimeoutError(mockProcessFile):
     mockProcessFile.return_value = SubmissionModel(
         id=1,
@@ -149,7 +145,7 @@ def test_UploadFileWhenWrongFormat():
     }
     
 
-@patch("app.routers.submissions_controller.SubmissionService.processSubmission",
+@patch("app.controllers.submissions_controller.SubmissionService.processSubmission",
        side_effect=Exception("Unexpected error")   
 )
 def test_UploadFileWhenUnknownErrorOccurs(mockProcessFile):
@@ -173,7 +169,7 @@ def test_UploadFileWhenUnknownErrorOccurs(mockProcessFile):
     mockProcessFile.assert_called_once()
     
     
-@patch("app.routers.submissions_controller.SubmissionService.loadAllSubmissions")
+@patch("app.controllers.submissions_controller.SubmissionService.loadAllSubmissions")
 def test_GetAllSubmissions(mockLoadAllSubmissions):
     mockLoadAllSubmissions.return_value = [
         SubmissionModel(
@@ -192,7 +188,7 @@ def test_GetAllSubmissions(mockLoadAllSubmissions):
     mockLoadAllSubmissions.assert_called_once()
     
 
-@patch("app.routers.submissions_controller.SubmissionService.loadAllSubmissions",
+@patch("app.controllers.submissions_controller.SubmissionService.loadAllSubmissions",
        side_effect=Exception("Unexpected error")   
 )
 def test_GetAllSubmissionsWhenErrorOccurs(mockLoadAllSubmissions):
@@ -207,7 +203,7 @@ def test_GetAllSubmissionsWhenErrorOccurs(mockLoadAllSubmissions):
     mockLoadAllSubmissions.assert_called_once()
     
     
-@patch("app.routers.submissions_controller.SubmissionService.loadSubmissionById")   
+@patch("app.controllers.submissions_controller.SubmissionService.loadSubmissionById")   
 def test_GetSubmissionById(mockLoadSubmissionById):
     mockLoadSubmissionById.return_value = SubmissionModel(
         id=1,
@@ -231,7 +227,7 @@ def test_GetSubmissionById(mockLoadSubmissionById):
     mockLoadSubmissionById.assert_called_once_with(submissionId=1)
     
 
-@patch("app.routers.submissions_controller.SubmissionService.loadSubmissionById")       
+@patch("app.controllers.submissions_controller.SubmissionService.loadSubmissionById")       
 def test_GetSubmissionByIdWhenErrorOccurs(mockLoadSubmissionById):
     mockLoadSubmissionById.side_effect = Exception("Unexpected error")
     response = client.get("/submissions/1")

@@ -44,7 +44,8 @@ def test_shouldLoadAllSubmissionDetailsFromDatabase(db_session):
         file_name = "solucao.py",
         status = "SUCCESS",
         stdout = "Resultado da execução do código",
-        stderr = "Sem erros"
+        stderr = "Sem erros",
+        error_message = None
     )
     
     new_submission_2 = SubmissionModel(
@@ -52,7 +53,8 @@ def test_shouldLoadAllSubmissionDetailsFromDatabase(db_session):
         file_name = "solucao2.py",
         status = "FAILURE",
         stdout = "Resultado da execução do código 2",
-        stderr = "Erros encontrados"
+        stderr = "Erros encontrados",
+        error_message = "Erro de execução"
     )
     
     db_session.add(new_submission_1)
@@ -74,7 +76,8 @@ def test_shouldLoadSubmissionDetailsByIdFromDatabase(db_session):
         file_name = "solucao.py",
         status = "SUCCESS",
         stdout = "Resultado da execução do código",
-        stderr = "Sem erros"
+        stderr = "Sem erros",
+        error_message = None
     )
     
     db_session.add(new_submission)
@@ -86,5 +89,5 @@ def test_shouldLoadSubmissionDetailsByIdFromDatabase(db_session):
     assert db_submission is not None
     assert db_submission.student_name == "Aluno Mock"
     assert db_submission.status == "SUCCESS"
-
+    assert db_submission.error_message is None
     

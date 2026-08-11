@@ -4,7 +4,8 @@ import sys
 import os
 import textwrap
 
-from app.services.service_exceptions import ExecutionFileError, InvalidOutputError
+from app.schemas.internal.file_executor import ExecutionResult, ExecutionStatus
+
 
 class FileExecutor:
 
@@ -13,7 +14,7 @@ class FileExecutor:
     def __init__(self):
         pass
 
-    def executeFile(self, fileContent: bytes):
+    def executeFile(self, fileContent: bytes)-> ExecutionResult:
         inputs = ["2", "3"]
         expectedOutput = "5"
         normalizedSource = textwrap.dedent(fileContent.decode("utf-8")).lstrip()
@@ -34,18 +35,41 @@ class FileExecutor:
             )
             
             if result.returncode != 0:
-                raise ExecutionFileError(f"Execution failed with error: {result.stderr.strip()}")
+                return ExecutionResult(
+                    status= ExecutionStatus.SYSTEM_ERROR,
+                    stdout= result.stdout.strip() or None,
+                    stderr= result.stderr.strip() or None,
+                    errorMessage= f"Execution failed with return code {result.returncode}. Error: {result.stderr.strip()}"
+                )
             
             executedOutput = result.stdout.strip()
+            
             if executedOutput == expectedOutput.strip():
-                return True
-            else:
-                raise InvalidOutputError(f"Expected output: {expectedOutput} but got result: {executedOutput}")
+                return ExecutionResult(
+                    status= ExecutionStatus.PASSED,
+                    stdout= executedOutput,
+                    stderr= result.stderr.strip() or None
+                )
+            
+            return ExecutionResult(
+                status= ExecutionStatus.WRONG_ANSWER,
+                stdout= executedOutput,
+                stderr= result.stderr.strip() or None,
+                errorMessage= f"Expected output: {expectedOutput.strip()}, but got: {executedOutput}"
+            )
 
         
         except(subprocess.TimeoutExpired):
-            raise TimeoutError(f"Execution timed out after {self.TIMEOUT_SECONDS} seconds")
-        
+            return ExecutionResult(
+                status= ExecutionStatus.TIMEOUT,
+                errorMessage= f"Execution exceeded the time limit of {self.TIMEOUT_SECONDS} seconds."
+            )
+            
+        except Exception as e:
+            return ExecutionResult(
+                status= ExecutionStatus.SYSTEM_ERROR,
+                errorMessage= f"An unexpected error occurred: {str(e)}"
+            )
         finally:
             if os.path.exists(tempPath):
                 os.remove(tempPath)

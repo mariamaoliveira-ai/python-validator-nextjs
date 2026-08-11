@@ -12,3 +12,4 @@ class SubmissionModel(Base):
     status = Column(String(255), nullable= False)
     stdout = Column(Text, nullable=True)
     stderr = Column(Text, nullable=True)
+    error_message = Column(Text, nullable=True)
